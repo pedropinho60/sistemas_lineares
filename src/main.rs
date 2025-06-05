@@ -1,7 +1,7 @@
 use std::path::Path;
 
 use nalgebra::{DMatrix, DVector, io};
-use sistemas_lineares::*;
+use sistemas_lineares_e_interpolacao_polinomial::*;
 
 fn main() -> std::io::Result<()> {
     let m1: DMatrix<f64> = io::cs_matrix_from_matrix_market(Path::new("matrizes/a3.mtx"))

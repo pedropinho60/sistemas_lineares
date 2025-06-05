@@ -353,7 +353,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "sistemas-lineares"
+name = "sistemas-lineares-e-interpolacao-polinomial"
 version = "0.1.0"
 dependencies = [
  "nalgebra",
