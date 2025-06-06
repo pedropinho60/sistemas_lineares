@@ -1,0 +1,68 @@
+Sistemas lineares
+[Início]
+   |
+   v
+[Receber os n pontos (x_i, y_i)]
+   |
+   v
+[Construir matriz de Vandermonde V, onde:
+ V_ij = x_i^j, 0 ≤ i, j < n ]
+   |
+   v
+[Montar sistema V * a = y, onde:
+ a = coeficientes do polinômio
+ y = vetor coluna com y_i ]
+   |
+   v
+[Resolver o sistema linear para encontrar os coeficientes a_j]
+   |
+   v
+[Construir o polinômio p(x) = a_0 + a_1 x + a_2 x² + ... + a_{n-1} x^{n-1}]
+   |
+   v
+[Fim]
+
+Lagrange
+[Início]
+   |
+   v
+[Receber os n pontos (x_k, y_k)]
+   |
+   v
+[Para cada k de 0 a n-1:
+   Construir o polinômio base de Lagrange L_k(x):
+   L_k(x) = ∏{j ≠ k} (x - x_j) / (x_k - x_j)
+]
+   |
+   v
+[Multiplicar cada L_k(x) pelo valor correspondente y_k]
+   |
+   v
+[Somar todos: p(x) = Σ{k=0}^{n-1} y_k * L_k(x)]
+   |
+   v
+[Fim]
+
+Diferenças divididas
+[Início]
+   |
+   v
+[Receber os n pontos (x_i, y_i)]
+   |
+   v
+[Construir tabela de Diferenças Divididas:
+   f[x_i] = y_i
+   f[x_i, x_{i+1}] = (f[x_{i+1}] - f[x_i]) / (x_{i+1} - x_i)
+   ...
+   Repetir até f[x_0, x_1, ..., x_{n-1}]
+]
+   |
+   v
+[Obter os coeficientes a_i da interpolação de Newton a partir da primeira linha da tabela]
+   |
+   v
+[Construir o polinômio:
+ p(x) = a_0 + a_1(x - x_0) + a_2(x - x_0)(x - x_1) + ... + a_{n-1}(x - x_0)...(x - x_{n-2})]
+   |
+   v
+[Fim]

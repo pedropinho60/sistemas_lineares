@@ -5,6 +5,7 @@ use std::{
 
 use nalgebra::{DMatrix, DVector};
 
+pub mod interpolation;
 pub mod methods;
 
 pub use methods::*;
@@ -36,19 +37,31 @@ pub fn residual(a: DMatrix<f64>, b: DVector<f64>, x: DVector<f64>) -> DVector<f6
 pub fn run_gauss(a: DMatrix<f64>, b: DVector<f64>, eps: f64) {
     let x = gaussian_elimination(a.clone(), b.clone(), eps);
     println!("Eliminação de Gauss: ");
-    println!("{x}");
+    match x {
+        Ok(x) => {
+            println!("{}", x);
 
-    let res = residual(a.clone(), b.clone(), x.clone());
-    println!("Resíduo: {}", res);
+            let res = residual(a.clone(), b.clone(), x.clone());
+            println!("Resíduo: {}", res);
+        }
+
+        Err(e) => println!("Erro: {}\n", e),
+    }
 }
 
 pub fn run_lu(a: DMatrix<f64>, b: DVector<f64>, eps: f64) {
     let x = lower_upper_decomposition(a.clone(), b.clone(), eps);
     println!("Fatoração LU: ");
-    println!("{x}");
+    match x {
+        Ok(x) => {
+            println!("{}", x);
 
-    let res = residual(a.clone(), b.clone(), x.clone());
-    println!("Resíduo: {}", res);
+            let res = residual(a.clone(), b.clone(), x.clone());
+            println!("Resíduo: {}", res);
+        }
+
+        Err(e) => println!("Erro: {}\n", e),
+    }
 }
 
 pub fn run_gauss_jacobi(a: DMatrix<f64>, b: DVector<f64>, eps: f64, lim_iter: u64) {
@@ -62,7 +75,7 @@ pub fn run_gauss_jacobi(a: DMatrix<f64>, b: DVector<f64>, eps: f64, lim_iter: u6
             println!("Resíduo: {}", res);
         }
 
-        Err(e) => println!("Erro: {}", e),
+        Err(e) => println!("Erro: {}\n", e),
     }
 }
 
@@ -77,6 +90,6 @@ pub fn run_gauss_seidel(a: DMatrix<f64>, b: DVector<f64>, eps: f64, lim_iter: u6
             let res = residual(a.clone(), b.clone(), x.clone());
             println!("Resíduo: {}", res);
         }
-        Err(e) => println!("Erro: {}", e),
+        Err(e) => println!("Erro: {}\n", e),
     }
 }

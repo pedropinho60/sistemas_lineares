@@ -1,0 +1,23 @@
+Matriz A:
+  ┌             ┐
+  │  0  5 -1  2 │
+  │  0  8 -1  1 │
+  │  2  1 -1 -1 │
+  │  0 -1 -2  1 │
+  └             ┘
+
+
+Vetor B:
+  ┌    ┐
+  │ 10 │
+  │ 16 │
+  │  2 │
+  │ -2 │
+  └    ┘
+
+
+Gauss-Jacobi:
+Erro: Erro ao calcular solução
+
+Gauss-Seidel:
+Erro: Erro ao calcular solução

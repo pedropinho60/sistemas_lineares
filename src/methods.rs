@@ -1,6 +1,10 @@
 use nalgebra::{DMatrix, DVector};
 
-pub fn gaussian_elimination(mut a: DMatrix<f64>, mut b: DVector<f64>, eps: f64) -> DVector<f64> {
+pub fn gaussian_elimination(
+    mut a: DMatrix<f64>,
+    mut b: DVector<f64>,
+    eps: f64,
+) -> Result<DVector<f64>, String> {
     let n = a.nrows();
 
     for k in 0..n {
@@ -16,6 +20,9 @@ pub fn gaussian_elimination(mut a: DMatrix<f64>, mut b: DVector<f64>, eps: f64) 
         }
 
         for i in k + 1..n {
+            if a[(k, k)].abs() < eps {
+                return Err(String::from("Erro ao calcular solução"));
+            }
             let mult = a[(i, k)] / a[(k, k)];
             for j in 0..n {
                 a[(i, j)] -= mult * a[(k, j)];
@@ -31,13 +38,20 @@ pub fn gaussian_elimination(mut a: DMatrix<f64>, mut b: DVector<f64>, eps: f64) 
         for j in i + 1..n {
             soma += a[(i, j)] * x[j];
         }
+        if a[(i, i)].abs() < eps {
+            return Err(String::from("Erro ao calcular solução"));
+        }
         x[i] = (b[i] - soma) / a[(i, i)];
     }
 
-    x
+    Ok(x)
 }
 
-pub fn lower_upper_decomposition(a: DMatrix<f64>, mut b: DVector<f64>, eps: f64) -> DVector<f64> {
+pub fn lower_upper_decomposition(
+    a: DMatrix<f64>,
+    mut b: DVector<f64>,
+    eps: f64,
+) -> Result<DVector<f64>, String> {
     let n = a.nrows();
 
     let mut l = DMatrix::identity(n, n);
@@ -56,6 +70,9 @@ pub fn lower_upper_decomposition(a: DMatrix<f64>, mut b: DVector<f64>, eps: f64)
             b.swap_rows(k, max_linha);
         }
         for i in k + 1..n {
+            if u[(k, k)].abs() < eps {
+                return Err(String::from("Erro ao calcular solução"));
+            }
             let mult = u[(i, k)] / u[(k, k)];
             l[(i, k)] = mult;
             for j in 0..n {
@@ -81,10 +98,13 @@ pub fn lower_upper_decomposition(a: DMatrix<f64>, mut b: DVector<f64>, eps: f64)
         for j in i + 1..n {
             soma += u[(i, j)] * x[j];
         }
+        if u[(i, i)].abs() < eps {
+            return Err(String::from("Erro ao calcular solução"));
+        }
         x[i] = (y[i] - soma) / u[(i, i)];
     }
 
-    x
+    Ok(x)
 }
 
 pub fn gauss_jacobi(
@@ -97,6 +117,9 @@ pub fn gauss_jacobi(
     let mut x_ant = DVector::zeros(n);
 
     for i in 0..n {
+        if a[(i, i)].abs() < eps {
+            return Err(String::from("Erro ao calcular solução"));
+        }
         x_ant[i] = b[i] / a[(i, i)];
     }
 
@@ -109,6 +132,9 @@ pub fn gauss_jacobi(
                 if j != i {
                     soma += a[(i, j)] * x_ant[j];
                 }
+            }
+            if a[(i, i)].abs() < eps {
+                return Err(String::from("Erro ao calcular solução"));
             }
             x[i] = (b[i] - soma) / a[(i, i)];
         }
@@ -146,6 +172,9 @@ pub fn gauss_seidel(
     let mut x_ant = DVector::zeros(n);
 
     for i in 0..n {
+        if a[(i, i)].abs() < eps {
+            return Err(String::from("Erro ao calcular solução"));
+        }
         x_ant[i] = b[i] / a[(i, i)];
     }
 
@@ -159,6 +188,9 @@ pub fn gauss_seidel(
             }
             for j in i + 1..n {
                 soma += a[(i, j)] * x_ant[j];
+            }
+            if a[(i, i)].abs() < eps {
+                return Err(String::from("Erro ao calcular solução"));
             }
             x[i] = (b[i] - soma) / a[(i, i)];
         }

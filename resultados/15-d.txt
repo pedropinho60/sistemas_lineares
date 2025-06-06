@@ -1,0 +1,23 @@
+Matriz A:
+  ┌             ┐
+  │  3 -2  5  1 │
+  │ -6  4 -8  1 │
+  │  9 -6 19  1 │
+  │  6 -4 -6 15 │
+  └             ┘
+
+
+Vetor B:
+  ┌    ┐
+  │  7 │
+  │ -9 │
+  │ 23 │
+  │ 11 │
+  └    ┘
+
+
+Eliminação de Gauss:
+Erro: Erro ao calcular solução
+
+Fatoração LU:
+Erro: Erro ao calcular solução
