@@ -30,6 +30,7 @@ pub fn interpolacao_sistema_linear(xs: &[f64], ys: &[f64]) -> Result<impl Fn(f64
 
     // Resolver V * a = y
     let a = gaussian_elimination(vander, y, 10e-6)?;
+    println!("A = {}", a);
 
     Ok(move |x: f64| {
         let mut res = 0.0;
@@ -41,6 +42,7 @@ pub fn interpolacao_sistema_linear(xs: &[f64], ys: &[f64]) -> Result<impl Fn(f64
         res
     })
 }
+
 
 pub fn intepolacao_lagrange(xs: &[f64], ys: &[f64]) -> impl Fn(f64) -> f64 {
     let n = xs.len();
