@@ -1,0 +1,4 @@
+Concentração real em 2008: 381ppm
+Concentração estimada em 2008 (2° grau): 385.7599999999511ppm
+Concentração estimada em 2008 (3° grau): 388.3520000129938ppm
+Anos em que f(x) = 350: 1993 e 2037

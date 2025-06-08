@@ -1,0 +1,2 @@
+f(0.75) estimado com grau 1: 2.5307
+f(0.75) estimado com grau 2: 2.4970812499999995

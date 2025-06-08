@@ -1,5 +1,15 @@
 use nalgebra::{DMatrix, DVector};
 
+/// Eliminação de Gauss com pivoteamento parcial
+///
+/// # Entrada
+/// a: Matriz nxn
+/// b: Vetor nx1
+/// eps: Valor mínimo
+///
+/// # Saída
+/// x: Vetor nx1, resultado do sistema linear, caso seja possível calcular.
+/// erro: String, caso ocorra erro.
 pub fn gaussian_elimination(
     mut a: DMatrix<f64>,
     mut b: DVector<f64>,
@@ -8,6 +18,7 @@ pub fn gaussian_elimination(
     let n = a.nrows();
 
     for k in 0..n {
+        // Troca de linhas
         if a[(k, k)].abs() < eps {
             let mut max_linha = k;
             for i in k + 1..n {
@@ -19,6 +30,7 @@ pub fn gaussian_elimination(
             b.swap_rows(k, max_linha);
         }
 
+        // Eliminação
         for i in k + 1..n {
             if a[(k, k)].abs() < eps {
                 return Err(String::from("Erro ao calcular solução"));
@@ -33,6 +45,7 @@ pub fn gaussian_elimination(
 
     let mut x = DVector::zeros(n);
 
+    // Retrossubstituição
     for i in (0..n).rev() {
         let mut soma = 0.0;
         for j in i + 1..n {
@@ -47,6 +60,16 @@ pub fn gaussian_elimination(
     Ok(x)
 }
 
+/// Fatoração LU com pivoteamento parcial
+///
+/// # Entrada
+/// a: Matriz nxn
+/// b: Vetor nx1
+/// eps: Valor mínimo
+///
+/// # Saída
+/// x: Vetor nx1, resultado do sistema linear, caso seja possível calcular.
+/// erro: String, caso ocorra erro.
 pub fn lower_upper_decomposition(
     a: DMatrix<f64>,
     mut b: DVector<f64>,
@@ -83,6 +106,7 @@ pub fn lower_upper_decomposition(
 
     let mut y = DVector::zeros(n);
 
+    // Retrossubstituição: (Ly = b)
     for i in 0..n {
         let mut soma = 0.0;
         for j in 0..i {
@@ -93,6 +117,7 @@ pub fn lower_upper_decomposition(
 
     let mut x = DVector::zeros(n);
 
+    // Retrossubstituição: (Ux = y)
     for i in (0..n).rev() {
         let mut soma = 0.0;
         for j in i + 1..n {
@@ -107,6 +132,17 @@ pub fn lower_upper_decomposition(
     Ok(x)
 }
 
+/// Método iterativo de Gauss-Jacobi para sistemas lineares
+///
+/// # Entrada
+/// a: Matriz nxn
+/// b: Vetor nx1
+/// eps: Critério de parada
+/// lim_iter: Limite de iterações
+///
+/// # Saída
+/// x: Vetor nx1, resultado do sistema linear, caso seja possível calcular.
+/// erro: String, caso ocorra erro.
 pub fn gauss_jacobi(
     a: DMatrix<f64>,
     b: DVector<f64>,
@@ -116,6 +152,7 @@ pub fn gauss_jacobi(
     let n = a.nrows();
     let mut x_ant = DVector::zeros(n);
 
+    // Chute inicial: b_i / a_ii
     for i in 0..n {
         if a[(i, i)].abs() < eps {
             return Err(String::from("Erro ao calcular solução"));
@@ -139,6 +176,7 @@ pub fn gauss_jacobi(
             x[i] = (b[i] - soma) / a[(i, i)];
         }
 
+        // Critério de parada
         let dist = x
             .iter()
             .zip(x_ant.iter())
@@ -146,12 +184,18 @@ pub fn gauss_jacobi(
             .max_by(|a, b| a.total_cmp(b))
             .unwrap();
 
+        // Distância absoluta
+        if dist < eps {
+            return Ok(x);
+        }
+
         let x_max = x
             .iter()
             .map(|a| a.abs())
             .max_by(|a, b| a.total_cmp(b))
             .unwrap();
 
+        // Distância relativa
         if dist / x_max < eps {
             return Ok(x);
         }
@@ -162,6 +206,17 @@ pub fn gauss_jacobi(
     Err(String::from("Limite de iterações atingido"))
 }
 
+/// Método iterativo de Gauss-Seidel para sistemas lineares
+///
+/// # Entrada
+/// a: Matriz nxn
+/// b: Vetor nx1
+/// eps: Critério de parada
+/// lim_iter: Limite de iterações
+///
+/// # Saída
+/// x: Vetor nx1, resultado do sistema linear, caso seja possível calcular.
+/// erro: String, caso ocorra erro.
 pub fn gauss_seidel(
     a: DMatrix<f64>,
     b: DVector<f64>,
@@ -171,6 +226,7 @@ pub fn gauss_seidel(
     let n = a.nrows();
     let mut x_ant = DVector::zeros(n);
 
+    // Chute inicial: b_i / a_ii
     for i in 0..n {
         if a[(i, i)].abs() < eps {
             return Err(String::from("Erro ao calcular solução"));
@@ -195,6 +251,7 @@ pub fn gauss_seidel(
             x[i] = (b[i] - soma) / a[(i, i)];
         }
 
+        // Critério de parada
         let dist = x
             .iter()
             .zip(x_ant.iter())
@@ -202,12 +259,18 @@ pub fn gauss_seidel(
             .max_by(|a, b| a.total_cmp(b))
             .unwrap();
 
+        // Distância absoluta
+        if dist < eps {
+            return Ok(x);
+        }
+
         let x_max = x
             .iter()
             .map(|a| a.abs())
             .max_by(|a, b| a.total_cmp(b))
             .unwrap();
 
+        // Distância relativa
         if dist / x_max < eps {
             return Ok(x);
         }

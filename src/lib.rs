@@ -6,10 +6,12 @@ use std::{
 use nalgebra::{DMatrix, DVector};
 
 pub mod interpolation;
-pub mod methods;
+pub mod linear_systems;
 
-pub use methods::*;
+pub use interpolation::*;
+pub use linear_systems::*;
 
+/// Lê o vetor B de um arquivo texto
 pub fn from_file(name: &str) -> std::io::Result<DVector<f64>> {
     let file = File::open(format!("matrizes/{}", name))?;
     let reader = BufReader::new(file);
@@ -24,6 +26,7 @@ pub fn from_file(name: &str) -> std::io::Result<DVector<f64>> {
     Ok(DVector::from_vec(b1))
 }
 
+/// Calcula o vetor resíduo |Ax - b|
 pub fn residual(a: DMatrix<f64>, b: DVector<f64>, x: DVector<f64>) -> DVector<f64> {
     let b2 = a * x;
 
@@ -34,6 +37,7 @@ pub fn residual(a: DMatrix<f64>, b: DVector<f64>, x: DVector<f64>) -> DVector<f6
         .into()
 }
 
+/// Executa eliminação de Gauss e imprime solução e resíduo
 pub fn run_gauss(a: DMatrix<f64>, b: DVector<f64>, eps: f64) {
     let x = gaussian_elimination(a.clone(), b.clone(), eps);
     println!("Eliminação de Gauss: ");
@@ -49,6 +53,7 @@ pub fn run_gauss(a: DMatrix<f64>, b: DVector<f64>, eps: f64) {
     }
 }
 
+/// Executa fatoração LU e imprime solução e resíduo
 pub fn run_lu(a: DMatrix<f64>, b: DVector<f64>, eps: f64) {
     let x = lower_upper_decomposition(a.clone(), b.clone(), eps);
     println!("Fatoração LU: ");
@@ -64,6 +69,7 @@ pub fn run_lu(a: DMatrix<f64>, b: DVector<f64>, eps: f64) {
     }
 }
 
+/// Executa método de Gauss-Jacobi e imprime solução e resíduo
 pub fn run_gauss_jacobi(a: DMatrix<f64>, b: DVector<f64>, eps: f64, lim_iter: u64) {
     let x = gauss_jacobi(a.clone(), b.clone(), eps, lim_iter);
     println!("Gauss-Jacobi: ");
@@ -79,6 +85,7 @@ pub fn run_gauss_jacobi(a: DMatrix<f64>, b: DVector<f64>, eps: f64, lim_iter: u6
     }
 }
 
+/// Executa método de Gauss-Seidel e imprime solução e resíduo
 pub fn run_gauss_seidel(a: DMatrix<f64>, b: DVector<f64>, eps: f64, lim_iter: u64) {
     let x = gauss_seidel(a.clone(), b.clone(), eps, lim_iter);
 

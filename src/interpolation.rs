@@ -2,18 +2,21 @@ use nalgebra::{DMatrix, DVector};
 
 use crate::gaussian_elimination;
 
-pub fn calcula_resultado(coeficientes: DVector<f64>, x: f64) -> f64 {
-    let mut res = 0.0;
-
-    for (i, c) in coeficientes.iter().enumerate() {
-        res += x.powi(i as i32) * c;
-    }
-
-    res
-}
-
-/// Função que recebe pontos (x, y) e retorna coeficientes do polinômio interpolador
-pub fn interpolacao_sistema_linear(xs: &[f64], ys: &[f64]) -> Result<impl Fn(f64) -> f64, String> {
+/// Método de interpolação através de sistemas lineares
+///
+/// # Entrada
+/// xs: Vetor de valores de x
+/// ys: Vetor de valores de f(x)
+///
+/// # Saída
+/// coefs: Vetor de coeficientes do polinômio
+/// p: Função do polinômio calculado por interpolação.
+///
+/// erro: String em caso de erro.
+pub fn interpolacao_sistema_linear(
+    xs: &[f64],
+    ys: &[f64],
+) -> Result<(DVector<f64>, impl Fn(f64) -> f64), String> {
     let n = xs.len();
     assert_eq!(n, ys.len(), "xs e ys devem ter o mesmo tamanho");
 
@@ -30,9 +33,8 @@ pub fn interpolacao_sistema_linear(xs: &[f64], ys: &[f64]) -> Result<impl Fn(f64
 
     // Resolver V * a = y
     let a = gaussian_elimination(vander, y, 10e-6)?;
-    println!("A = {}", a);
 
-    Ok(move |x: f64| {
+    Ok((a.clone(), move |x: f64| {
         let mut res = 0.0;
 
         for (i, c) in a.iter().enumerate() {
@@ -40,14 +42,22 @@ pub fn interpolacao_sistema_linear(xs: &[f64], ys: &[f64]) -> Result<impl Fn(f64
         }
 
         res
-    })
+    }))
 }
 
-
+/// Método de interpolação de Lagrange
+///
+/// # Entrada
+/// xs: Vetor de valores de x
+/// ys: Vetor de valores de f(x)
+///
+/// # Saída
+/// p: Polinômio calculado por interpolação.
 pub fn intepolacao_lagrange(xs: &[f64], ys: &[f64]) -> impl Fn(f64) -> f64 {
     let n = xs.len();
     assert_eq!(n, ys.len(), "xs e ys devem ter o mesmo tamanho");
 
+    // Retorna a função do polinômio
     move |x| {
         let mut result = 0.0;
 
@@ -65,7 +75,15 @@ pub fn intepolacao_lagrange(xs: &[f64], ys: &[f64]) -> impl Fn(f64) -> f64 {
         result
     }
 }
-/// Calcula os coeficientes do polinômio de Newton via diferenças divididas
+
+/// Método de diferenças divididas de newton
+///
+/// # Entrada
+/// xs: Vetor de valores de x
+/// ys: Vetor de valores de f(x)
+///
+/// # Saída
+/// p: Polinômio calculado por interpolação.
 pub fn newton_diferencas_divididas(xs: &[f64], ys: &[f64]) -> impl Fn(f64) -> f64 {
     let n = xs.len();
     assert_eq!(n, ys.len(), "xs e ys devem ter o mesmo tamanho");
@@ -80,6 +98,7 @@ pub fn newton_diferencas_divididas(xs: &[f64], ys: &[f64]) -> impl Fn(f64) -> f6
         }
     }
 
+    // Retorna função do polinômio calculado
     move |x| {
         let n = coef.len();
         let mut result = coef[n - 1];
